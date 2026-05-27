@@ -1,0 +1,12 @@
+{
+  "sound": true,
+  "notification": false,
+  "suppressWhenFocused": false,
+  "events": {
+    "permission": { "sound": true, "notification": false, "bell": false },
+    "complete": { "sound": true, "notification": false, "bell": false },
+    "question": { "sound": true, "notification": false, "bell": false },
+    "error": { "sound": true, "notification": false, "bell": false },
+    "plan_exit": { "sound": true, "notification": false, "bell": false }
+  }
+}
