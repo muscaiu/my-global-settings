@@ -1,0 +1,4 @@
+custom-shader = /Users/cristianmuscalu/.config/ghostty/shaders/cursor.glsl
+
+# Send Ctrl+Space for tmux prefix.
+keybind = super+k=text:\x00
