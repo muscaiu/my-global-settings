@@ -69,6 +69,8 @@ The tmux config uses the Catppuccin theme from this path:
 ~/.config/tmux/plugins/catppuccin/tmux/catppuccin.tmux
 ```
 
+The config sources Catppuccin's `.conf` files directly instead of using `run ~/.config/tmux/plugins/catppuccin/tmux/catppuccin.tmux`. This avoids tmux server PATH issues where the plugin script cannot find the Homebrew `tmux` binary.
+
 Install it on the new machine with:
 
 ```sh
@@ -88,25 +90,23 @@ Or fully restart tmux if it is already running.
 
 After copying `home/.config/ghostty` to `~/.config/ghostty`, restart Ghostty so it loads the config.
 
-Ghostty is configured to start or attach to the main tmux session automatically:
-
-```ini
-command = /opt/homebrew/bin/tmux new-session -A -s main
-```
-
-This uses the Apple Silicon Homebrew tmux path. On another machine, verify the path with:
+Ghostty intentionally starts a normal shell. Start tmux manually when wanted:
 
 ```sh
-which tmux
+tmux new-session -A -s main
 ```
 
-If needed, update the `command` line in `~/.config/ghostty/config` before launching Ghostty. The intended behavior is: opening Ghostty attaches to an existing `main` tmux session, or creates it if it does not exist.
+The Ghostty config keeps only terminal-specific behavior, such as the tmux prefix key helper:
+
+```ini
+keybind = super+k=text:\x00
+```
 
 AI maintenance notes:
 
-- Preserve the Ghostty `command` line when restoring terminal settings on a new machine.
-- If `tmux` is installed somewhere other than `/opt/homebrew/bin/tmux`, replace only the path and keep `new-session -A -s main`.
-- Do not duplicate this behavior in `.zshrc` unless the user explicitly wants every Ghostty shell to force tmux from the shell layer.
+- Do not add a Ghostty `command = tmux ...` auto-start line unless the user explicitly asks for that behavior again.
+- Keep tmux theme and behavior in `.tmux.conf`, not in Ghostty config.
+- To enter the preferred tmux session manually, use `tmux new-session -A -s main`.
 
 ## opencode Notifier
 

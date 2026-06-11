@@ -1,7 +1,4 @@
 custom-shader = /Users/cristianmuscalu/.config/ghostty/shaders/cursor.glsl
 
-# Start or attach to the main tmux session when Ghostty opens.
-command = /opt/homebrew/bin/tmux new-session -A -s main
-
 # Send Ctrl+Space for tmux prefix.
 keybind = super+k=text:\x00
