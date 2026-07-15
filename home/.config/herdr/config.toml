@@ -1,0 +1,14 @@
+[ui]
+agent_panel_sort = "spaces"
+show_agent_labels_on_pane_borders = true
+
+[theme]
+name = "dracula"
+auto_switch = false
+
+[experimental]
+pane_history = true
+
+[keys]
+prefix = "ctrl+space"
+toggle_sidebar = "cmd+b"

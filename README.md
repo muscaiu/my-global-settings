@@ -1,10 +1,11 @@
 # Terminal Settings
 
-Backup of Ghostty, tmux, and opencode terminal-adjacent settings.
+Backup of Ghostty, Herdr, tmux, and opencode terminal-adjacent settings.
 
 ## Contents
 
 - `home/.config/ghostty/` - Ghostty config and shaders
+- `home/.config/herdr/` - Herdr theme, UI, history, and keybindings
 - `home/.config/opencode/` - Global opencode config, including notifier plugin setup
 - `home/.tmux.conf` - tmux config
 - `home/.zshrc` - zsh, oh-my-zsh, Powerlevel10k, and autocomplete setup
@@ -16,6 +17,7 @@ From this repository root on a new machine:
 ```sh
 mkdir -p ~/.config
 cp -R home/.config/ghostty ~/.config/
+cp -R home/.config/herdr ~/.config/
 cp -R home/.config/opencode ~/.config/
 cp home/.tmux.conf ~/
 cp home/.zshrc ~/
@@ -107,6 +109,19 @@ AI maintenance notes:
 - Do not add a Ghostty `command = tmux ...` auto-start line unless the user explicitly asks for that behavior again.
 - Keep tmux theme and behavior in `.tmux.conf`, not in Ghostty config.
 - To enter the preferred tmux session manually, use `tmux new-session -A -s main`.
+
+## Herdr
+
+After copying `home/.config/herdr` to `~/.config/herdr`, reload a running Herdr server:
+
+```sh
+herdr server reload-config
+```
+
+The Herdr config uses the Dracula theme, persists pane history, and uses these keybindings:
+
+- `Ctrl+Space` enters prefix mode.
+- `Command+B` toggles the sidebar directly.
 
 ## opencode Notifier
 
