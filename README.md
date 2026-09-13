@@ -5,8 +5,8 @@ Backup of Ghostty, Herdr, tmux, and opencode terminal-adjacent settings.
 ## Contents
 
 - `home/.config/ghostty/` - Ghostty config and shaders
-- `home/.config/herdr/` - Herdr theme, UI, history, and keybindings
-- `home/.config/opencode/` - Global opencode config, including notifier plugin setup
+- `home/.config/herdr/` - Herdr theme, UI, history, keybindings, and plugin registration
+- `home/.config/opencode/` - Global opencode config, custom agents, and notifier plugin setup
 - `home/.tmux.conf` - tmux config
 - `home/.zshrc` - zsh, oh-my-zsh, Powerlevel10k, and autocomplete setup
 
@@ -22,6 +22,8 @@ cp -R home/.config/opencode ~/.config/
 cp home/.tmux.conf ~/
 cp home/.zshrc ~/
 ```
+
+`home/.config/herdr/plugins.json` contains `manifest_path`/`plugin_root` entries that are absolute paths under this machine's home directory (e.g. `resume-globally` under `~/Applications/plugins/`). On a new machine, either adjust those paths to match the new username/layout or reinstall the plugin there and let Herdr regenerate its own entry.
 
 If `~/.config/opencode/opencode.json` already exists, merge it manually instead of overwriting it. Preserve existing providers, agents, permissions, and MCP servers, then add the notifier plugin entry if missing.
 
@@ -122,6 +124,16 @@ The Herdr config uses the Dracula theme, persists pane history, and uses these k
 
 - `Ctrl+Space` enters prefix mode.
 - `Command+B` toggles the sidebar directly.
+
+## opencode Custom Agents
+
+`home/.config/opencode/agents/` holds custom agent definitions used with opencode:
+
+- `orchestrator.md` - primary agent that delegates implementation/review across existing Herdr panes without creating, closing, or reconfiguring them
+- `sysadmin.md` - subagent for shell/service/network/server diagnostics with a safety-first, smallest-safe-change approach
+- `local-qwen.md` - agent that runs `lmstudio/qwen3.6-35b-a3b-mlx` through LM Studio for implementation and debugging
+
+Start opencode in orchestrator mode with the `opencode --agents` shell function defined in `.zshrc` (runs `opencode --agent orchestrator`).
 
 ## opencode Notifier
 

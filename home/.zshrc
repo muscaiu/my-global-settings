@@ -79,6 +79,8 @@ ZSH_THEME="robbyrussell"
 # Add wisely, as too many plugins slow down shell startup.
 
 export PATH=$(brew --prefix)/bin:$PATH
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH"
 plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
@@ -148,3 +150,30 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Users/cristianmuscalu/.lmstudio/bin"
 # End of LM Studio CLI section
+
+# Start OpenCode in orchestrator mode with: opencode --agents
+opencode() {
+  if [[ "$1" == "--agents" ]]; then
+    shift
+    command opencode --agent orchestrator "$@"
+  else
+    command opencode "$@"
+  fi
+}
+
+# Cursor Agent: start in yolo mode (auto-approve tools, MCP, and web search)
+agent() {
+  command agent --yolo --approve-mcps "$@"
+}
+
+cursor() {
+  if [[ "$1" == "agent" ]]; then
+    shift
+    command cursor agent --yolo --approve-mcps "$@"
+  else
+    command cursor "$@"
+  fi
+}
+
+# >>> oh-my-opencode-slim background subagents >>>
+# <<< oh-my-opencode-slim background subagents <<<

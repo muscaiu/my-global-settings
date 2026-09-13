@@ -1,0 +1,47 @@
+[
+  {
+    "plugin_id": "resume-globally",
+    "name": "Resume Globally",
+    "version": "0.1.0",
+    "min_herdr_version": "0.8.0",
+    "manifest_path": "/Users/cristianmuscalu/Applications/plugins/resume-globally/herdr-plugin.toml",
+    "plugin_root": "/Users/cristianmuscalu/Applications/plugins/resume-globally",
+    "enabled": true,
+    "platforms": [
+      "macos"
+    ],
+    "actions": [
+      {
+        "id": "open",
+        "title": "Resume a session",
+        "command": [
+          "herdr",
+          "plugin",
+          "pane",
+          "open",
+          "--plugin",
+          "resume-globally",
+          "--entrypoint",
+          "resume"
+        ]
+      }
+    ],
+    "panes": [
+      {
+        "id": "resume",
+        "title": "Resume",
+        "placement": "popup",
+        "width": "80%",
+        "height": "80%",
+        "command": [
+          "sh",
+          "-c",
+          "exec \"$HERDR_PLUGIN_ROOT/bin/resume-globally\""
+        ]
+      }
+    ],
+    "source": {
+      "kind": "local"
+    }
+  }
+]

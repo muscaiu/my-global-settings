@@ -1,4 +1,8 @@
+theme = Ghostty Default Style Dark
 custom-shader = /Users/cristianmuscalu/.config/ghostty/shaders/cursor.glsl
 
 # Send Ctrl+Space for tmux prefix.
 keybind = super+k=text:\x00
+
+# Disable quit/close confirmation
+confirm-close-surface = false
