@@ -10,6 +10,21 @@ Backup of this Mac's global dev environment settings: Ghostty, Herdr, tmux, open
 - `home/.claude/` - Claude Code global settings, orchestrator mode command/hooks/statusline
 - `home/.tmux.conf` - tmux config
 - `home/.zshrc` - zsh, oh-my-zsh, Powerlevel10k, and autocomplete setup
+- `projects/` - reusable, named project profiles for agent guidance and workflows
+
+## Project Profiles
+
+Project-specific AI instructions live under `projects/<project>/`. Keep product names, repository paths, release checks, deployment targets, and platform IDs inside that project's profile rather than making them global defaults.
+
+For example, ask an agent:
+
+```text
+Use the Spend project profile from muscaiu/my-global-settings, especially
+projects/spend/RELEASE.md, as the release strategy for this repository.
+Adapt repository-specific paths and identifiers; do not copy them blindly.
+```
+
+Each profile should contain `AGENTS.md`, the workflow documents it references, and thin command prompts under `commands/`. Add another sibling directory when a project needs different rules.
 
 ## Apply On A New Machine
 
