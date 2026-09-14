@@ -1,12 +1,13 @@
-# Terminal Settings
+# My Global Settings
 
-Backup of Ghostty, Herdr, tmux, and opencode terminal-adjacent settings.
+Backup of this Mac's global dev environment settings: Ghostty, Herdr, tmux, opencode, and Claude Code.
 
 ## Contents
 
 - `home/.config/ghostty/` - Ghostty config and shaders
 - `home/.config/herdr/` - Herdr theme, UI, history, keybindings, and plugin registration
 - `home/.config/opencode/` - Global opencode config, custom agents, and notifier plugin setup
+- `home/.claude/` - Claude Code global settings, orchestrator mode command/hooks/statusline
 - `home/.tmux.conf` - tmux config
 - `home/.zshrc` - zsh, oh-my-zsh, Powerlevel10k, and autocomplete setup
 
@@ -19,9 +20,15 @@ mkdir -p ~/.config
 cp -R home/.config/ghostty ~/.config/
 cp -R home/.config/herdr ~/.config/
 cp -R home/.config/opencode ~/.config/
+cp -R home/.claude/commands ~/.claude/
+cp -R home/.claude/hooks ~/.claude/
+cp -R home/.claude/scripts ~/.claude/
+cp home/.claude/settings.json ~/.claude/
 cp home/.tmux.conf ~/
 cp home/.zshrc ~/
 ```
+
+If `~/.claude/settings.json` already exists, merge it manually instead of overwriting it. Preserve any existing hooks, permissions, or other settings the new machine already has.
 
 `home/.config/herdr/plugins.json` contains `manifest_path`/`plugin_root` entries that are absolute paths under this machine's home directory (e.g. `resume-globally` under `~/Applications/plugins/`). On a new machine, either adjust those paths to match the new username/layout or reinstall the plugin there and let Herdr regenerate its own entry.
 
@@ -124,6 +131,28 @@ The Herdr config uses the Dracula theme, persists pane history, and uses these k
 
 - `Ctrl+Space` enters prefix mode.
 - `Command+B` toggles the sidebar directly.
+
+## Claude Code
+
+`home/.claude/settings.json` sets:
+
+- `permissions.defaultMode = "bypassPermissions"` and `skipDangerousModePermissionPrompt = true` - Claude Code runs tool calls without an approval prompt on this machine
+- A `SessionStart` hook chain (`herdr-agent-state.sh session`, then `orchestrator-session-start.sh`)
+- A `statusLine` command (`orchestrator-statusline.sh`) that shows model/dir info plus an orchestrator badge
+- `spinnerVerbs`, `autoUpdatesChannel`, `tui`, `theme`, `shiftEnterKeyBindingInstalled` cosmetic/behavior tweaks
+
+`~/.claude/settings.local.json` (allows `Bash(ssh:*)` on this machine) is intentionally not tracked — it's excluded by this machine's global gitignore (`**/.claude/settings.local.json`) since it's meant to stay local, not synced.
+
+### Orchestrator mode
+
+`home/.claude/commands/orchestrator.md` implements the `/orchestrator on|off|status` command. It toggles a per-project state file at `~/.claude/orchestrator-state/<sha256(cwd)>.json` and, once active, delegates implementation/review to existing sibling Herdr panes (leftmost sibling = dev, next = reviewer) without ever creating, closing, or reconfiguring panes or agents.
+
+- `home/.claude/hooks/orchestrator-session-start.sh` - re-injects the orchestrator contract as SessionStart context after `/clear`/compact/resume for a project where orchestrator mode is active; clears the `active` flag on a genuine cold "startup" instead of resurrecting it
+- `home/.claude/scripts/orchestrator-statusline.sh` - draws the `🎭 ORCHESTRATOR (dev:x review:y)` statusline badge, but only in the saved coordinator pane
+
+Not backed up: `home/.claude/hooks/herdr-agent-state.sh` (and its opencode counterpart) — these are installed and overwritten by Herdr's own integration on setup, not hand-authored config.
+
+On a new machine, orchestrator mode still needs Herdr running with `HERDR_ENV`, `HERDR_SOCKET_PATH`, and `HERDR_PANE_ID` set in the pane for pane adoption/delegation to work; the command/hooks/statusline alone don't require it just to toggle on/off/status.
 
 ## opencode Custom Agents
 
