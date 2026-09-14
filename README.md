@@ -16,6 +16,11 @@ Backup of this Mac's global dev environment settings: Ghostty, Herdr, tmux, open
 
 Project-specific AI instructions live under `projects/<project>/`. Keep product names, repository paths, release checks, deployment targets, and platform IDs inside that project's profile rather than making them global defaults.
 
+Current profiles:
+
+- `projects/spend/` - Costility/Spend, a pnpm monorepo where mobile is an Expo WebView shell around the deployed web app; release includes App Store/Play Store reconciliation against a `MOBILE_RELEASES` registry.
+- `projects/memodesk/` - memodesk, a pnpm monorepo where mobile is a separate native Expo app (not a WebView) sharing sync/storage logic with web via `packages/shared`; release skips store reconciliation since there's no App Store Connect/Play Console listing yet.
+
 For example, ask an agent:
 
 ```text
