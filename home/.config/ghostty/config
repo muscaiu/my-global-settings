@@ -1,5 +1,8 @@
 theme = Ghostty Default Style Dark
 custom-shader = /Users/cristianmuscalu/.config/ghostty/shaders/cursor.glsl
+# Stop the continuous per-frame animation loop the shader would otherwise
+# run while focused (was pegging CPU/GPU and spiking fans/temps).
+custom-shader-animation = false
 
 # Send Ctrl+Space for tmux prefix.
 keybind = super+k=text:\x00
