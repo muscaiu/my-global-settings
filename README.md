@@ -1,12 +1,13 @@
 # My Global Settings
 
-Backup of this Mac's global dev environment settings: Ghostty, Herdr, tmux, opencode, and Claude Code.
+Backup of this Mac's global dev environment settings: Ghostty, Herdr, tmux, Hermes, opencode, and Claude Code.
 
 ## Contents
 
 - `home/.config/ghostty/` - Ghostty config and shaders
 - `home/.config/herdr/` - Herdr theme, UI, history, keybindings, and plugin registration
 - `home/.config/opencode/` - Global opencode config, custom agents, and notifier plugin setup
+- `home/.hermes/` - Portable Hermes personality prompts and custom skills
 - `home/.claude/` - Claude Code global settings, orchestrator mode command/hooks/statusline
 - `home/.tmux.conf` - tmux config
 - `home/.zshrc` - zsh, oh-my-zsh, Powerlevel10k, and autocomplete setup
@@ -46,6 +47,7 @@ cp -R home/.claude/scripts ~/.claude/
 cp home/.claude/settings.json ~/.claude/
 cp home/.tmux.conf ~/
 cp home/.zshrc ~/
+./install-hermes-orchestrator.sh
 ```
 
 If `~/.claude/settings.json` already exists, merge it manually instead of overwriting it. Preserve any existing hooks, permissions, or other settings the new machine already has.
@@ -151,6 +153,29 @@ The Herdr config uses the Dracula theme, persists pane history, and uses these k
 
 - `Ctrl+Space` enters prefix mode.
 - `Command+B` toggles the sidebar directly.
+
+## Hermes
+
+`install-hermes-orchestrator.sh` installs a selectable Hermes personality plus the `hermes-herdr-orchestrator` skill without replacing the rest of `~/.hermes/config.yaml`.
+
+```sh
+./install-hermes-orchestrator.sh
+```
+
+To install it into a named Hermes profile instead of the default profile:
+
+```sh
+./install-hermes-orchestrator.sh profile-name
+```
+
+Inside Hermes, toggle the mode with:
+
+```text
+/personality orchestrator
+/personality none
+```
+
+When active, Hermes stays in the coordinator pane and uses existing visible Herdr sibling panes as developer and reviewer. It does not create, close, resize, restart, or reconfigure panes or their agents.
 
 ## Claude Code
 
