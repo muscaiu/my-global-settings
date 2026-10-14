@@ -9,6 +9,7 @@ Backup of this Mac's global dev environment settings: Ghostty, Herdr, tmux, Herm
 - `home/.config/opencode/` - Global opencode config, custom agents, and notifier plugin setup
 - `home/.hermes/` - Portable Hermes personality prompts and custom skills
 - `home/.claude/` - Claude Code global settings, orchestrator mode command/hooks/statusline
+- `home/.config/zed/` - Zed settings and custom themes (secrets and machine-specific entries removed)
 - `home/.tmux.conf` - tmux config
 - `home/.zshrc` - zsh, oh-my-zsh, Powerlevel10k, and autocomplete setup
 - `projects/` - reusable, named project profiles for agent guidance and workflows
@@ -57,6 +58,46 @@ If `~/.claude/settings.json` already exists, merge it manually instead of overwr
 If `~/.config/opencode/opencode.json` already exists, merge it manually instead of overwriting it. Preserve existing providers, agents, permissions, and MCP servers, then add the notifier plugin entry if missing.
 
 If `~/.zshrc` already exists, merge it manually instead of overwriting it. Preserve local PATH entries, language/runtime managers, aliases, and machine-specific CLI setup.
+
+## Zed
+
+Backed up from a macOS machine: `home/.config/zed/settings.json` and `home/.config/zed/themes/`. There is no custom keymap or snippets file, so none is stored.
+
+> **Security warning:** these copied settings permit unsandboxed commands. `agent.sandbox_permissions.allow_unsandboxed` is `true`, and the agent `terminal` tool defaults to `allow` (with `git` commands also always allowed), so the Zed agent can run shell commands without prompting. Review these values before applying, and tighten them on machines or projects you do not fully trust.
+
+Apply on a new machine without overwriting anything (`cp -n` skips existing files):
+
+```sh
+mkdir -p ~/.config/zed/themes
+cp -n home/.config/zed/themes/*.json ~/.config/zed/themes/
+# Only if ~/.config/zed/settings.json does not exist yet:
+cp -n home/.config/zed/settings.json ~/.config/zed/settings.json
+```
+
+If `~/.config/zed/settings.json` already exists, merge it manually instead of overwriting it. Zed reloads settings automatically.
+
+Not included on purpose, add these per machine:
+
+- `context_servers` GitHub MCP server: its `github_personal_access_token` was removed. Create a new token on the new machine and add the `mcp-server-github` entry through Zed's agent panel settings.
+- `ssh_connections`: LAN hosts, usernames, and remote project paths are machine-specific.
+- `language_models.openai_compatible` "LM Studio": the `api_url` points to a LAN IP. Re-add with the new machine's LM Studio address.
+- `settings_backup.json`, `prompts/` database, extensions, and caches: runtime/machine state.
+
+Per-machine setup that this repo does not provide:
+
+- External agent binaries and auth: `agent_servers` lists `pi-acp`, `opencode`, `codex-acp`, and `claude-acp` as registry agents, which Zed downloads itself, but the tools behind them (opencode, Codex, Claude Code, pi) and their logins or API keys must be installed and signed in on each machine. `agent.default_model` uses the `openai-subscribed` provider, which needs its own sign-in.
+- Fonts: no font files are stored here. Zed uses its defaults unless the settings name a font; install any custom font on the new machine.
+
+Extensions installed on the source machine (from `~/Library/Application Support/Zed/extensions/installed`, IDs only):
+
+`catppuccin-icons`, `dockerfile`, `html`, `ktrz-monokai`, `log`, `mcp-server-github`, `monokai-og`, `monokai-pro-ce`
+
+`settings.json` declares them in `auto_install_extensions`, so Zed installs them on first launch. Extension code itself is not stored here. The icon theme "Catppuccin Macchiato" needs `catppuccin-icons`. The files in `themes/` are plain theme files that need no extension; the active dark theme is "One Dark Pro". `mcp-server-github` also needs a new GitHub token (see above).
+
+AI maintenance notes:
+
+- Never copy `~/.config/zed/settings.json` into this repo without removing tokens, API keys, `ssh_connections`, and LAN URLs first.
+- Zed settings are JSONC (comments and trailing commas allowed).
 
 ## zsh Autocomplete
 
