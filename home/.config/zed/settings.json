@@ -58,6 +58,9 @@
     "dark": "One Dark Pro"
   },
   "theme_overrides": {
+    "Omazed": {
+      "ignored": "#6b6254"
+    },
     "One Dark Pro": {
       "syntax": {
         "tag.component.jsx": {
