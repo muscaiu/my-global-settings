@@ -9,6 +9,7 @@ Backup of this Mac's global dev environment settings: Ghostty, Herdr, tmux, Herm
 - `home/.config/opencode/` - Global opencode config, custom agents, and notifier plugin setup
 - `home/.hermes/` - Portable Hermes personality prompts and custom skills
 - `home/.claude/` - Claude Code global settings, orchestrator mode command/hooks/statusline
+- `home/.pi/` - pi coding agent `/orchestrator` extension (orchestrator mode only)
 - `home/.config/zed/` - Zed settings and custom themes (secrets and machine-specific entries removed)
 - `home/.tmux.conf` - tmux config
 - `home/.zshrc` - zsh, oh-my-zsh, Powerlevel10k, and autocomplete setup
@@ -46,9 +47,11 @@ cp -R home/.claude/commands ~/.claude/
 cp -R home/.claude/hooks ~/.claude/
 cp -R home/.claude/scripts ~/.claude/
 cp home/.claude/settings.json ~/.claude/
+mkdir -p ~/.pi/agent/extensions
+cp -n home/.pi/agent/extensions/orchestrator.ts ~/.pi/agent/extensions/
 cp home/.tmux.conf ~/
 cp home/.zshrc ~/
-./install-hermes-orchestrator.sh
+./scripts/install-hermes-orchestrator.sh
 ```
 
 If `~/.claude/settings.json` already exists, merge it manually instead of overwriting it. Preserve any existing hooks, permissions, or other settings the new machine already has.
@@ -197,16 +200,16 @@ The Herdr config uses the Dracula theme, persists pane history, and uses these k
 
 ## Hermes
 
-`install-hermes-orchestrator.sh` installs a selectable Hermes personality plus the `hermes-herdr-orchestrator` skill without replacing the rest of `~/.hermes/config.yaml`.
+`scripts/install-hermes-orchestrator.sh` installs a selectable Hermes personality plus the `hermes-herdr-orchestrator` skill without replacing the rest of `~/.hermes/config.yaml`.
 
 ```sh
-./install-hermes-orchestrator.sh
+./scripts/install-hermes-orchestrator.sh
 ```
 
 To install it into a named Hermes profile instead of the default profile:
 
 ```sh
-./install-hermes-orchestrator.sh profile-name
+./scripts/install-hermes-orchestrator.sh profile-name
 ```
 
 Inside Hermes, toggle the mode with:
@@ -239,6 +242,37 @@ When active, Hermes stays in the coordinator pane and uses existing visible Herd
 Not backed up: `home/.claude/hooks/herdr-agent-state.sh` (and its opencode counterpart) — these are installed and overwritten by Herdr's own integration on setup, not hand-authored config.
 
 On a new machine, orchestrator mode still needs Herdr running with `HERDR_ENV`, `HERDR_SOCKET_PATH`, and `HERDR_PANE_ID` set in the pane for pane adoption/delegation to work; the command/hooks/statusline alone don't require it just to toggle on/off/status.
+
+## pi Orchestrator
+
+`home/.pi/agent/extensions/orchestrator.ts` adds a `/orchestrator on|off|status` command to the [pi](https://github.com/earendil-works/pi) coding agent. It is a single-file pi extension, so there is no separate skill: pi loads `~/.pi/agent/extensions/*.ts` on startup, and `/reload` picks up changes in a running session.
+
+What it loads and does:
+
+- Registers the `/orchestrator` command (no argument means `on`).
+- Reads and writes the same per-project state file as Claude Code and opencode: `~/.claude/orchestrator-state/<sha256(cwd)>.json`. `/orchestrator status` therefore agrees across all three harnesses.
+- While active, on every turn it appends the delegation contract (leftmost sibling Herdr pane = dev, next = reviewer, never create/close/resize panes or agents) plus the live Herdr layout to pi's system prompt, and shows a `🎭 ORCHESTRATOR` badge in the coordinator pane.
+- The live layout comes from `home/.claude/scripts/herdr-layout-context.py`, which the extension runs with `python3` at `~/.claude/scripts/herdr-layout-context.py`. It is only invoked when `HERDR_ENV=1`.
+
+Install on a new machine (the generic apply steps above already copy `home/.claude/scripts/`):
+
+```sh
+mkdir -p ~/.pi/agent/extensions
+cp -n home/.pi/agent/extensions/orchestrator.ts ~/.pi/agent/extensions/
+cp -n home/.claude/scripts/herdr-layout-context.py ~/.claude/scripts/
+```
+
+Then start pi inside a Herdr pane and run `/orchestrator on`. Dependencies: pi itself, Herdr (`herdr` on `PATH`; `HERDR_ENV`, `HERDR_PANE_ID` set in the pane), `python3`, and a writable `~/.claude/`. The extension only uses Node built-ins and a type-only import, so it needs no `npm install`. The paths use `os.homedir()`, so nothing is machine-specific.
+
+Not backed up on purpose (machine-specific, credentials, or runtime state): `~/.pi/agent/auth.json`, `models.json`, `models-store.json`, `settings.json` (contains a device id, package list, and project trust choices), `trust.json`, `sessions/`, `npm/`, `bin/`, and the other local extensions (`herdr-boss`, `subagent`, `herdr-agent-state`, `compact-via-openai`). Configure provider login and models on each machine with `/login` and `/model`.
+
+Security notes:
+
+- pi extensions run inside the pi process with your full user permissions and pi has no built-in sandbox or per-tool approval. Read `orchestrator.ts` before installing it; it only spawns `python3` on a fixed path (no shell, 5 s timeout, output ignored on failure) and writes the state JSON under `~/.claude/orchestrator-state/`.
+- The injected text is the static contract plus pane IDs and agent names/status from Herdr. It does not include pane contents or terminal titles. Delegation goes through `herdr agent prompt`, so each dev/reviewer pane keeps whatever permissions its own agent has.
+- The state file is plain JSON keyed by a hash of the project path; anyone who can write it can turn orchestrator mode on or off for that project. `/orchestrator status` prints its contents.
+- The author's pi runs with `defaultProjectTrust: "always"`, which loads project `.pi` extensions, skills, and settings without prompting. That is deliberately not copied here. Keep pi's default (`ask`) on machines or folders you do not fully trust.
+- The contract tells the coordinator not to read `credentials.json`, commit, push, or approve destructive actions without explicit authorization. It is an instruction to the model, not an enforced boundary.
 
 ## opencode Custom Agents
 
