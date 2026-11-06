@@ -11,6 +11,7 @@ Backup of this Mac's global dev environment settings: Ghostty, Herdr, tmux, Herm
 - `home/.claude/` - Claude Code global settings, orchestrator mode command/hooks/statusline
 - `home/.pi/` - pi coding agent `/orchestrator` extension (orchestrator mode only)
 - `home/.config/zed/` - Zed settings and custom themes (secrets and machine-specific entries removed)
+- `home/Library/Preferences/eu.exelban.Stats.plist` - Stats (exelban/stats) menu bar monitor preferences
 - `home/.tmux.conf` - tmux config
 - `home/.zshrc` - zsh, oh-my-zsh, Powerlevel10k, and autocomplete setup
 - `projects/` - reusable, named project profiles for agent guidance and workflows
@@ -101,6 +102,30 @@ AI maintenance notes:
 
 - Never copy `~/.config/zed/settings.json` into this repo without removing tokens, API keys, `ssh_connections`, and LAN URLs first.
 - Zed settings are JSONC (comments and trailing commas allowed).
+
+## Stats (menu bar system monitor)
+
+[Stats](https://github.com/exelban/stats) shows CPU, RAM, SSD, and network usage in the menu bar. Its preferences are stored as `home/Library/Preferences/eu.exelban.Stats.plist`, exported with `defaults export eu.exelban.Stats` (a per-disk UUID entry was removed because it is machine-specific).
+
+Apply on a new machine:
+
+```sh
+brew install --cask stats
+# Open Stats once, then quit it so it does not overwrite the import:
+osascript -e 'quit app "Stats"'
+defaults import eu.exelban.Stats home/Library/Preferences/eu.exelban.Stats.plist
+killall cfprefsd
+open -a Stats
+```
+
+Re-export after changing settings:
+
+```sh
+defaults export eu.exelban.Stats home/Library/Preferences/eu.exelban.Stats.plist
+plutil -convert xml1 home/Library/Preferences/eu.exelban.Stats.plist
+```
+
+Then remove any `<UUID>_details` keys (disk-specific) before committing.
 
 ## zsh Autocomplete
 
