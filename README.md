@@ -80,6 +80,14 @@ If `~/.zshrc` already exists, merge it manually instead of overwriting it. Prese
 
 ## Zed
 
+To install the exported settings, panel placement, keymap preset, extension list, and all eight custom themes on the new Mac:
+
+```sh
+sh scripts/install-zed.sh
+```
+
+This replaces Zed's settings after backing up any existing configuration beside `~/.config/zed` (or under `XDG_CONFIG_HOME` if set). Custom keymaps and other existing files are left intact. Quit Zed before installing, then reopen it. This is a portable configuration export, not a session migration: open tabs, split arrangements, window positions, project history, and conversations are not included. Project-specific `.zed/settings.json` files must travel with their projects. The model selection is copied as-is and may require a currently available model on the new Mac.
+
 Backed up from a macOS machine: `home/.config/zed/settings.json` and `home/.config/zed/themes/`. There is no custom keymap or snippets file, so none is stored.
 
 > **Security warning:** these copied settings permit unsandboxed commands. `agent.sandbox_permissions.allow_unsandboxed` is `true`, and the agent `terminal` tool defaults to `allow` (with `git` commands also always allowed), so the Zed agent can run shell commands without prompting. Review these values before applying, and tighten them on machines or projects you do not fully trust.
@@ -143,6 +151,22 @@ plutil -convert xml1 home/Library/Preferences/eu.exelban.Stats.plist
 Then remove any `<UUID>_details` keys (disk-specific) before committing.
 
 ## zsh Autocomplete
+
+### Full Terminal Migration
+
+The source Mac uses Oh My Zsh with the built-in `git` plugin and Powerlevel10k as the final active prompt. The export includes `.zshrc`, `.zprofile`, `.p10k.zsh`, the fallback Starship configuration, and the active Terminal.app `Homebrew` profile's colors/font settings. It excludes shell history, credentials, signing-key paths, and caches. The original Mac is not modified.
+
+On the new Mac, install Homebrew first if needed, then run from this repository:
+
+```sh
+sh scripts/install-terminal.sh
+```
+
+The installer installs Homebrew dependencies and fetches Oh My Zsh and Powerlevel10k from their official repositories if absent. Existing shell settings are backed up into `~/terminal-settings-backup.*` before replacement. Review and merge any new-Mac-only configuration from that backup. Developer tools such as nvm, Bun, pnpm, and agent CLIs, and their logins, must be installed separately. The existing `agent` and `cursor agent` wrappers enable auto-approval; review them before use.
+
+For configuration-only installation without downloads, use `sh scripts/install-terminal.sh --config-only`. To restore, copy backed-up files to their original locations; the backed-up `starship.toml` belongs in `~/.config/`.
+
+In Terminal Settings > Profiles, use the action menu's **Import** to select `terminal/Homebrew.terminal`, then set the imported profile as **Default** and open a new window. Importing can create a second profile with the same name; select the imported one. If glyphs look wrong, select the installed **MesloLGS Nerd Font**. The original font is recorded in the profile but its font file is not bundled. Starship initializes only when Powerlevel10k is missing.
 
 The zsh config keeps the existing Ghostty -> tmux -> zsh stack and adds lightweight autocomplete without switching shells.
 

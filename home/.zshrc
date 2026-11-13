@@ -78,16 +78,22 @@ ZSH_THEME="robbyrussell"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 
-export PATH=$(brew --prefix)/bin:$PATH
+if command -v brew >/dev/null 2>&1; then
+  export PATH="$(brew --prefix)/bin:$PATH"
+fi
 export ANDROID_HOME="$HOME/Library/Android/sdk"
 export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH"
 plugins=(git)
 
-source $ZSH/oh-my-zsh.sh
+[[ ! -r "$ZSH/oh-my-zsh.sh" ]] || source "$ZSH/oh-my-zsh.sh"
 
 # Autocomplete enhancements for zsh/tmux/Ghostty.
-source /opt/homebrew/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+if command -v brew >/dev/null 2>&1; then
+  brew_prefix=$(brew --prefix)
+  [[ ! -r "$brew_prefix/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh" ]] || source "$brew_prefix/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh"
+  [[ ! -r "$brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] || source "$brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  unset brew_prefix
+fi
 
 # User configuration
 
@@ -118,37 +124,39 @@ source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-eval "$(starship init zsh)"
+if [[ ! -r "$HOME/powerlevel10k/powerlevel10k.zsh-theme" ]] && command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
 
 # source /Users/cristianmuscalu/.docker/init-zsh.sh || true # Added by Docker Desktop
 
 # bun completions
-[ -s "/Users/cristianmuscalu/.bun/_bun" ] && source "/Users/cristianmuscalu/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # pnpm
-export PNPM_HOME="/Users/cristianmuscalu/Library/pnpm"
+export PNPM_HOME="$HOME/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm endsource ~/powerlevel10k/powerlevel10k.zsh-theme
-source ~/powerlevel10k/powerlevel10k.zsh-theme
+[[ ! -r "$HOME/powerlevel10k/powerlevel10k.zsh-theme" ]] || source "$HOME/powerlevel10k/powerlevel10k.zsh-theme"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 
-. "$HOME/.local/bin/env"
+[[ ! -r "$HOME/.local/bin/env" ]] || . "$HOME/.local/bin/env"
 
 # OpenClaw Completion
 # source <(openclaw completion --shell zsh)
 
 # Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/cristianmuscalu/.lmstudio/bin"
+export PATH="$PATH:$HOME/.lmstudio/bin"
 # End of LM Studio CLI section
 
 # Start OpenCode in orchestrator mode with: opencode --agents
@@ -177,3 +185,5 @@ cursor() {
 
 # >>> oh-my-opencode-slim background subagents >>>
 # <<< oh-my-opencode-slim background subagents <<<
+
+herdr-boss() { pi --model herdr/boss "$@"; }
