@@ -12,9 +12,24 @@ Backup of this Mac's global dev environment settings: Ghostty, Herdr, tmux, Herm
 - `home/.pi/` - pi coding agent `/orchestrator` extension (orchestrator mode only)
 - `home/.config/zed/` - Zed settings and custom themes (secrets and machine-specific entries removed)
 - `home/Library/Preferences/eu.exelban.Stats.plist` - Stats (exelban/stats) menu bar monitor preferences
+- `home/bin/src/copyshotimage.m` - screenshot-to-clipboard helper (see Screenshots below)
 - `home/.tmux.conf` - tmux config
 - `home/.zshrc` - zsh, oh-my-zsh, Powerlevel10k, and autocomplete setup
 - `projects/` - reusable, named project profiles for agent guidance and workflows
+
+## Screenshots
+
+Screenshots are saved to `~/Documents/Screenshots` (iCloud-synced) and each new one is put on the clipboard as an image, so Cmd+V pastes it anywhere, including other Apple devices via Universal Clipboard.
+
+```sh
+./scripts/install-screenshot-clipboard.sh
+```
+
+It sets the screenshot folder, turns off the floating thumbnail (it delays saving the file by about 5 seconds), compiles `home/bin/src/copyshotimage.m` into `~/bin/copyshotpath-bin`, and installs a LaunchAgent that runs it whenever the folder changes. The script is idempotent. It needs Xcode Command Line Tools (`xcode-select --install`).
+
+A compiled helper is used on purpose: macOS blocks background shell scripts from reading `~/Documents`, and the helper gets its own narrow permission prompt instead of giving `/bin/zsh` Full Disk Access. If macOS asks, allow `copyshotpath-bin` to access Documents.
+
+Restore the thumbnail with `defaults write com.apple.screencapture show-thumbnail -bool true && killall SystemUIServer`. The uninstall command is printed by the script.
 
 ## Project Profiles
 
