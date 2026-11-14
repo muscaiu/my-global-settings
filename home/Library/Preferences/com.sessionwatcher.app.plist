@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SUAutomaticallyUpdate</key>
+	<true/>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SW.claude.menuBar.left</key>
+	<string>sessionAndWeekly</string>
+	<key>SW.claude.menuBar.right</key>
+	<string>off</string>
+	<key>SW.claude.showLimitResets</key>
+	<true/>
+	<key>SW.claude.showTokenDetails</key>
+	<true/>
+	<key>SW.codex.displayMode</key>
+	<string>sessionAndWeekly</string>
+	<key>SW.cursor.displayMode</key>
+	<string>percentage</string>
+	<key>SW.enabledTools</key>
+	<array>
+		<string>opencode</string>
+		<string>codex</string>
+		<string>claude</string>
+		<string>cursor</string>
+		<string>copilot</string>
+	</array>
+	<key>SW.menuBarEnabledTools</key>
+	<array>
+		<string>deepseek</string>
+		<string>synthetic</string>
+		<string>cursor</string>
+		<string>commandcode</string>
+		<string>mistral</string>
+		<string>copilot</string>
+		<string>grokbot</string>
+		<string>codex</string>
+		<string>hyper</string>
+		<string>musecode</string>
+		<string>claude</string>
+		<string>devin</string>
+		<string>grok</string>
+		<string>fireworks</string>
+		<string>zai</string>
+		<string>gemini</string>
+		<string>antigravity</string>
+		<string>typesafe</string>
+		<string>opencode</string>
+		<string>openrouter</string>
+		<string>kimi</string>
+		<string>qwen</string>
+	</array>
+	<key>SW.pinnedWindowFontSizeMultiplier</key>
+	<real>1</real>
+	<key>SW.showRemainingPercentage</key>
+	<true/>
+	<key>automaticUpdateChecks</key>
+	<true/>
+	<key>automaticUpdateInstalls</key>
+	<true/>
+</dict>
+</plist>

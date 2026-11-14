@@ -12,6 +12,7 @@ Backup of this Mac's global dev environment settings: Ghostty, Herdr, tmux, Herm
 - `home/.pi/` - pi coding agent `/orchestrator` extension (orchestrator mode only)
 - `home/.config/zed/` - Zed settings and custom themes (secrets and machine-specific entries removed)
 - `home/Library/Preferences/eu.exelban.Stats.plist` - Stats (exelban/stats) menu bar monitor preferences
+- `home/Library/Preferences/com.sessionwatcher.app.plist` - SessionWatcher menu bar AI usage monitor preferences (license and machine state removed)
 - `home/bin/src/copyshotimage.m` - screenshot-to-clipboard helper (see Screenshots below)
 - `home/.tmux.conf` - tmux config
 - `home/.zshrc` - zsh, oh-my-zsh, Powerlevel10k, and autocomplete setup
@@ -149,6 +150,28 @@ plutil -convert xml1 home/Library/Preferences/eu.exelban.Stats.plist
 ```
 
 Then remove any `<UUID>_details` keys (disk-specific) before committing.
+
+## SessionWatcher (menu bar AI usage monitor)
+
+SessionWatcher shows Claude, Codex, and Cursor usage limits in the menu bar. Its portable preferences are stored as `home/Library/Preferences/com.sessionwatcher.app.plist`. The notable setting is `SW.showRemainingPercentage` = `true` ("Show remaining % instead of used" in Settings > General), plus the menu bar display modes and enabled providers.
+
+Not included on purpose: the license key/email/plan, machine IDs, rollout and validation state, usage history and deadlines, and the menu bar position. Sign in and activate the license on the new Mac instead.
+
+Apply on a new machine:
+
+```sh
+# Install SessionWatcher, open it once, then quit it so it does not overwrite the import:
+osascript -e 'quit app "SessionWatcher"'
+defaults import com.sessionwatcher.app home/Library/Preferences/com.sessionwatcher.app.plist
+killall cfprefsd
+open -a SessionWatcher
+```
+
+`defaults import` replaces the whole domain, so import before activating the license, or use `defaults write com.sessionwatcher.app SW.showRemainingPercentage -bool true` on an already-activated install.
+
+AI maintenance notes:
+
+- Never export `com.sessionwatcher.app` into this repo without deleting every `SW.license*` key, machine/rollout IDs, and runtime state first.
 
 ## zsh Autocomplete
 
