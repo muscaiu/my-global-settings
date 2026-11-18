@@ -8,7 +8,7 @@ Backup of this Mac's global dev environment settings: Ghostty, Herdr, tmux, Herm
 - `home/.config/herdr/` - Herdr theme, UI, history, keybindings, and plugin registration
 - `home/.config/opencode/` - Global opencode config, custom agents, and notifier plugin setup
 - `home/.hermes/` - Portable Hermes personality prompts and custom skills
-- `home/.claude/` - Claude Code global settings, orchestrator mode command/hooks/statusline
+- `home/.claude/` - Claude Code global settings, orchestrator mode command/hooks/statusline, and the `/t3-crew` skills for T3 Code
 - `home/.pi/` - pi coding agent `/orchestrator` extension (orchestrator mode only)
 - `home/.config/zed/` - Zed settings and custom themes (secrets and machine-specific entries removed)
 - `home/Library/Preferences/eu.exelban.Stats.plist` - Stats (exelban/stats) menu bar monitor preferences
@@ -63,6 +63,8 @@ cp -R home/.config/opencode ~/.config/
 cp -R home/.claude/commands ~/.claude/
 cp -R home/.claude/hooks ~/.claude/
 cp -R home/.claude/scripts ~/.claude/
+mkdir -p ~/.claude/skills
+cp -R home/.claude/skills/t3-crew home/.claude/skills/t3-crew-default ~/.claude/skills/
 cp home/.claude/settings.json ~/.claude/
 mkdir -p ~/.pi/agent/extensions
 cp -n home/.pi/agent/extensions/orchestrator.ts ~/.pi/agent/extensions/
@@ -329,6 +331,17 @@ When active, Hermes stays in the coordinator pane and uses existing visible Herd
 Not backed up: `home/.claude/hooks/herdr-agent-state.sh` (and its opencode counterpart) — these are installed and overwritten by Herdr's own integration on setup, not hand-authored config.
 
 On a new machine, orchestrator mode still needs Herdr running with `HERDR_ENV`, `HERDR_SOCKET_PATH`, and `HERDR_PANE_ID` set in the pane for pane adoption/delegation to work; the command/hooks/statusline alone don't require it just to toggle on/off/status.
+
+### T3 crew (T3 Code)
+
+`home/.claude/skills/t3-crew/` and `home/.claude/skills/t3-crew-default/` are user-invoked Claude Code skills for T3 Code. They turn the current thread into an orchestrator that runs a preset crew of T3 child tasks (`delegate_task`) for every request until turned off.
+
+- `/t3-crew [task]` - wizard: pick a preset (dev, dev + reviewer, or dev + tester + reviewer), then a model per agent from the live T3 provider catalog (Claude, Codex, Cursor)
+- `/t3-crew last` - skip the wizard and reuse the crew saved in `~/.claude/t3-crew/last.json`
+- `/t3-crew-default [task]` - no questions: dev = Claude Opus 5.5, reviewer = Cursor Auto (reads `t3-crew/SKILL.md` for the shared behavior, so install both together)
+- `/t3-crew off` or `/t3-crew-default off` - turn crew mode off
+
+Needs T3 Code with its MCP tools (`orchestrator_capabilities`, `delegate_task`, ...) and the providers/models you pick signed in on that machine. `~/.claude/t3-crew/last.json` is per-machine state written by the skills, so it is not tracked; the first `/t3-crew` run on a new machine creates it.
 
 ## pi Orchestrator
 
