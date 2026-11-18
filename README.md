@@ -10,6 +10,7 @@ Backup of this Mac's global dev environment settings: Ghostty, Herdr, tmux, Herm
 - `home/.hermes/` - Portable Hermes personality prompts and custom skills
 - `home/.claude/` - Claude Code global settings, orchestrator mode command/hooks/statusline, and the `/t3-crew` skills for T3 Code
 - `home/.pi/` - pi coding agent `/orchestrator` extension (orchestrator mode only)
+- `home/.claude/skills/`, `home/.codex/skills/`, `home/.cursor/skills/`, `home/.pi/agent/skills/` - `t3-crew` and `t3-crew-default` skills so crew mode works whichever harness is the T3 Code orchestrator (see T3 Crew below)
 - `home/.config/zed/` - Zed settings and custom themes (secrets and machine-specific entries removed)
 - `home/Library/Preferences/eu.exelban.Stats.plist` - Stats (exelban/stats) menu bar monitor preferences
 - `home/Library/Preferences/com.sessionwatcher.app.plist` - SessionWatcher menu bar AI usage monitor preferences (license and machine state removed)
@@ -31,6 +32,25 @@ It sets the screenshot folder, turns off the floating thumbnail (it delays savin
 A compiled helper is used on purpose: macOS blocks background shell scripts from reading `~/Documents`, and the helper gets its own narrow permission prompt instead of giving `/bin/zsh` Full Disk Access. If macOS asks, allow `copyshotpath-bin` to access Documents.
 
 Restore the thumbnail with `defaults write com.apple.screencapture show-thumbnail -bool true && killall SystemUIServer`. The uninstall command is printed by the script.
+
+## T3 Crew
+
+`/t3-crew` turns the current T3 Code thread into an orchestrator that runs a dev (and optionally tester and reviewer) as T3 child tasks, with a model picked per role. `/t3-crew-default` skips the questions and uses a fixed crew: dev = Claude Opus 5.5, reviewer = Cursor Auto. Both are user-invoked only.
+
+```sh
+./scripts/install-t3-crew.sh
+```
+
+| Harness | Skill folder | Invoke |
+|---|---|---|
+| Claude Code | `~/.claude/skills/` | `/t3-crew`, `/t3-crew-default` |
+| Codex | `~/.codex/skills/` | `$t3-crew`, `$t3-crew-default` |
+| Cursor | `~/.cursor/skills/` | `/t3-crew`, `/t3-crew-default` |
+| pi | `~/.pi/agent/skills/` | `/skill:t3-crew`, `/skill:t3-crew-default` |
+
+The Claude copies name Claude-only tools (`ToolSearch`, `AskUserQuestion`, `mcp__t3-code__*`). The Codex, Cursor, and pi copies are harness-neutral: they call the `t3-code` MCP tools however that harness exposes them and fall back to plain-text questions. All four share `~/.claude/t3-crew/last.json`, so `last` works from any harness. Keep the four copies in sync when editing; the non-Claude ones differ only in the invoke syntax, skill path, and frontmatter. Codex disables implicit invocation through `agents/openai.yaml`.
+
+Requires the T3 Code MCP tools to be available to the harness; if they are missing the skill says so and stops. Not verified yet: that each harness actually receives the `t3-code` tools when it is the orchestrator.
 
 ## Project Profiles
 
