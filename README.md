@@ -363,6 +363,8 @@ On a new machine, orchestrator mode still needs Herdr running with `HERDR_ENV`, 
 
 Needs T3 Code with its MCP tools (`orchestrator_capabilities`, `delegate_task`, ...) and the providers/models you pick signed in on that machine. `~/.claude/t3-crew/last.json` is per-machine state written by the skills, so it is not tracked; the first `/t3-crew` run on a new machine creates it.
 
+Codex, Cursor, and pi have their own copies of these skills; see [T3 Crew](#t3-crew) above, and `./scripts/install-t3-crew.sh` installs all four.
+
 ## pi Orchestrator
 
 `home/.pi/agent/extensions/orchestrator.ts` adds a `/orchestrator on|off|status` command to the [pi](https://github.com/earendil-works/pi) coding agent. It is a single-file pi extension, so there is no separate skill: pi loads `~/.pi/agent/extensions/*.ts` on startup, and `/reload` picks up changes in a running session.
